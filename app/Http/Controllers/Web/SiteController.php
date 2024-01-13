@@ -9,10 +9,15 @@ use Illuminate\Http\Request;
 class SiteController extends Controller
 {
 
-    public function request(Request $request){
-        $name = $request->input('name', 'default_name');
-
-        return $name;
+    /**
+     * Show all tasks.
+     *
+     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     */
+    public function index(){
+        return redirect(
+            route('tasks.index'),301
+        );
     }
 
     public function getall(){
