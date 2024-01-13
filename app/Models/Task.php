@@ -7,6 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Testing\Exceptions\InvalidArgumentException;
 use Illuminate\Support\Str;
 
+
+/**
+ * Task model.
+ * 
+ * @property string $title
+ * @property string $idToken
+ * @property string $content
+ * @property string $status
+ */
 class Task extends Model
 {
     use HasFactory;
@@ -14,6 +23,10 @@ class Task extends Model
     protected const AVAILABLE_STATUSES =[
         'Active' => 'active',
         'Completed' => 'completed'
+    ];
+
+    protected $fillable = [
+        'title', 'idToken', 'content', 'status'
     ];
 
     public static function getStatus(string $key){
@@ -35,22 +48,14 @@ class Task extends Model
         return array_values(self::AVAILABLE_STATUSES);
     } 
 
-    protected static function boot()
-    {
-        parent::boot();
 
-        static::creating(function(Task $task){
-            $task->idToken = $task->title;
-        });
-
-        static::updating(function(Task $task){
-            $task->idToken = $task->title;
-        });
+    public function getRouteKeyName(){
+        return "idToken";
     }
 
     public function setIdToken(string $idToken)
     {
-        $taskIdToken =Str::slug($idToken);
+        $taskIdToken = Str::slug($idToken);
         $matchingTokens = Task::select('idToken')
             ->where('idToken', "LIKE", "$taskIdToken%")->get();
 
@@ -59,6 +64,20 @@ class Task extends Model
             $taskIdToken = Str::slug("{$taskIdToken}-{$matchingCount}");
         }
 
-        $this->attributes['idToken'] = $taskIdToken;
+        // $this->attributes['idToken'] = Str::slug($idToken);
+        return Str::slug($taskIdToken);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function(Task $task){
+            $task->idToken = $task->setIdToken($task->title);
+        });
+
+        static::updating(function(Task $task){
+            $task->idToken = $task->setIdToken($task->title);
+        });
     }
 }

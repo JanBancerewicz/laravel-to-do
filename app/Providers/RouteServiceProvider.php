@@ -19,6 +19,12 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/home';
 
+
+    protected function registerRoutesPatterns(){
+        Route::pattern('idToken', "^[a-z0-9]+(?:-[a-z0-9]+)*$");
+    }
+
+
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
      */
@@ -34,6 +40,8 @@ class RouteServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->registerRoutesPatterns();
+
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
