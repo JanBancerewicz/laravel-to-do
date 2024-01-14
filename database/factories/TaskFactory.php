@@ -23,7 +23,7 @@ class TaskFactory extends Factory
                 fake()->numberBetween(2,6)
             ),
             'content' => fake()->sentence(
-                fake()->numberBetween(10,20)
+                fake()->numberBetween(15,30)
             ),
             'status' => fake()->randomElement(
                 Task::getAvailableStatuses()

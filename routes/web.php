@@ -33,22 +33,22 @@ Route::namespace('Web')->group(function()
         Route::get('/','TaskController@index')->name('tasks.index');
     
         //add
-        Route::get('/add','TaskController@index')->name('tasks.add');
+        Route::get('/add','TaskController@add')->name('tasks.add');
     
         //store
-        Route::post('/store','TaskController@index')->name('tasks.store');
+        Route::post('/store','TaskController@store')->name('tasks.store');
     
         //{task}
-        Route::get('/{task}','TaskController@index')->name('tasks.show');
+        Route::get('/{task}','TaskController@show')->name('tasks.show');
     
         //{task}/edit
-        Route::get('/{task}/edit','TaskController@index')->name('tasks.edit');
+        Route::get('/{task}/edit','TaskController@edit')->name('tasks.edit');
     
         //{task}
-        Route::put('/{task}','TaskController@index')->name('tasks.update');
+        Route::put('/{task}','TaskController@update')->name('tasks.update');
     
         //{task}
-        Route::delete('/{task}','TaskController@index')->name('tasks.delete');
+        Route::delete('/{task}','TaskController@delete')->name('tasks.delete');
     });
 
 

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('title',100);
             $table->string('idToken')->unique();
-            $table->string('content');
+            $table->string('content', 1000)->nullable();
             $table->enum('status', Task::getAvailableStatuses());
             $table->timestamps();
         });

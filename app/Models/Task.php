@@ -29,6 +29,11 @@ class Task extends Model
         'title', 'idToken', 'content', 'status'
     ];
 
+    protected $attributes =[
+        'content' => '',
+        'status' => self::AVAILABLE_STATUSES['Active']
+    ];
+
     public static function getStatus(string $key){
         if(!array_key_exists($key, self::AVAILABLE_STATUSES)){
             throw new InvalidArgumentException(

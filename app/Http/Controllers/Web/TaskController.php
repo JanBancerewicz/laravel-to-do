@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreTaskRequest;
+// use Illuminate\Http\Request;
 use App\Models\Task;
 
 class TaskController extends Controller
@@ -14,32 +15,49 @@ class TaskController extends Controller
      *
      * @return string
      */
-    public function index(){
+    public function index()
+    {
+        $activeTasks = Task::where(
+            'status',
+            Task::getStatus('Active')
+        )->orderBy('created_at','DESC')
+        ->get();
+
+        $completedTasks = Task::where(
+            'status',
+            Task::getStatus('Completed')
+        )->orderBy('created_at','DESC')
+        ->get();
+
         return view('tasks.index', [
-            'activeTasks'       => Task::where('status', Task::getStatus('Active'))->get(),
-            'completedTasks'    => Task::where('status', Task::getStatus('Completed'))->get(),
+            'activeTasks'       => $activeTasks,
+            'completedTasks'    => $completedTasks,
         ]);
     }
 
     /**
      * Show form for new task.
      *
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     * @return string
      */
     public function add(){
-        return redirect(
-            route('tasks.index'),301
-        );
+        return view('tasks.add',[
+            'defaultStatus' => Task::getStatus('Active')
+        ]);
     }
 
     /**
      * Store new task.
      *
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     * @return string
      */
-    public function store(){
+    public function store(StoreTaskRequest $request){
+        $task = new Task($request->validated());
+
         return redirect(
-            route('tasks.index'),301
+            route('tasks.show',
+                ['task' => Task::create($request->validated())]
+            )
         );
     }
 
@@ -47,12 +65,10 @@ class TaskController extends Controller
      * Show a single task.
      *
      * @param Task $task
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     * @return string
      */
     public function show(Task $task){
-        return redirect(
-            route('tasks.index'),301
-        );
+        return view('tasks.show', ['task'=> $task]);
     }
 
     /**
