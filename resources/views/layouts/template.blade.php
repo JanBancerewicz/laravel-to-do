@@ -12,6 +12,12 @@
     <!-- Bootstrap Bundle with Popper -->
     <script src="{{asset('bootstrap/js/bootstrap.bundle.min.js')}}"></script>
     
+    <style>
+        html{
+            scrollbar-gutter: stable;
+        }
+    </style>
+
     <title>@yield('title')</title>
 </head>
 

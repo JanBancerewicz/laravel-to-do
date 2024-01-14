@@ -5,8 +5,9 @@ use App\Http\Controllers\Controller;
 
 
 use App\Http\Requests\StoreTaskRequest;
-// use Illuminate\Http\Request;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
@@ -20,13 +21,13 @@ class TaskController extends Controller
         $activeTasks = Task::where(
             'status',
             Task::getStatus('Active')
-        )->orderBy('created_at','DESC')
+        )->orderBy('updated_at','DESC')
         ->get();
 
         $completedTasks = Task::where(
             'status',
             Task::getStatus('Completed')
-        )->orderBy('created_at','DESC')
+        )->orderBy('updated_at','DESC')
         ->get();
 
         return view('tasks.index', [
@@ -49,10 +50,9 @@ class TaskController extends Controller
     /**
      * Store new task.
      *
-     * @return string
+     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
      */
     public function store(StoreTaskRequest $request){
-        $task = new Task($request->validated());
 
         return redirect(
             route('tasks.show',
@@ -75,12 +75,12 @@ class TaskController extends Controller
      * Show edit form for a single task.
      *
      * @param Task $task
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     * @return string
      */
     public function edit(Task $task){
-        return redirect(
-            route('tasks.index'),301
-        );
+        return view('tasks.edit', [
+            'task' => $task
+        ]);
     }
 
     /**
@@ -89,9 +89,24 @@ class TaskController extends Controller
      * @param Task $task
      * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
      */
-    public function update(Task $task){
+    public function update(UpdateTaskRequest $request, Task $task){
+        if($task->update($request->validated()))
+        {
+            $request->session()->flash('status', [
+                'success' => true,
+                'message' => 'Task updated successsfully'
+            ]);
+        }else{
+            $request->session()->flash('status', [
+                'success' => false,
+                'message' => 'Update error!'
+            ]);
+        }
+
         return redirect(
-            route('tasks.index'),301
+            route('tasks.show',
+                ['task' => $task]
+            )
         );
     }
 
@@ -99,11 +114,24 @@ class TaskController extends Controller
      * Delete a single task.
      *
      * @param Task $task
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     * @return string
      */
-    public function delete(Task $task){
+    public function delete(Request $request, Task $task){
+        if($task->delete())
+        {
+            $request->session()->flash('status', [
+                'success' => true,
+                'message' => 'Task deleted successsfully'
+            ]);
+        }else{
+            $request->session()->flash('status', [
+                'success' => false,
+                'message' => 'Delete error!'
+            ]);
+        }
+
         return redirect(
-            route('tasks.index'),301
+            route('tasks.index')
         );
     }
 }

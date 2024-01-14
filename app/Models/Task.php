@@ -73,6 +73,10 @@ class Task extends Model
         return Str::slug($taskIdToken);
     }
 
+    public function matchStatus(string $key){
+        return ($this->status == self::getStatus($key));
+    }
+
     protected static function boot()
     {
         parent::boot();
