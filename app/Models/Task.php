@@ -58,35 +58,12 @@ class Task extends Model
         return "idToken";
     }
 
-    public function setIdToken(string $idToken)
-    {
-        $taskIdToken = Str::slug($idToken);
-        $matchingTokens = Task::select('idToken')
-            ->where('idToken', "LIKE", "$taskIdToken%")->get();
-
-        if($matchingTokens->isNotEmpty()){
-            $matchingCount = $matchingTokens->count();
-            $taskIdToken = Str::slug("{$taskIdToken}-{$matchingCount}");
-        }
-
-        // $this->attributes['idToken'] = Str::slug($idToken);
-        return Str::slug($taskIdToken);
-    }
 
     public function matchStatus(string $key){
         return ($this->status == self::getStatus($key));
     }
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function(Task $task){
-            $task->idToken = $task->setIdToken($task->title);
-        });
-
-        static::updating(function(Task $task){
-            $task->idToken = $task->setIdToken($task->title);
-        });
+    public function setIdToken(string $idToken){
+        $this->attributes['idToken']=$idToken;
     }
 }
